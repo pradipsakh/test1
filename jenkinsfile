@@ -16,16 +16,16 @@ properties([
                 $class: 'GroovyScript', 
                 fallbackScript: [
                     classpath: [], 
-         //           sandbox: false, 
+                    sandbox: true, 
                     script: 
                         'return[\'Could not read the ${env.WORKSPACE}/src directory\']'
                 ], 
                 script: [
                     classpath: [], 
-     //               sandbox: false, 
+                    sandbox: true, 
                     script: 
                         '''
-                               def files = findFiles(glob: \'${env.WORKSPACE}/scr/**\') 
+                               def files = findFiles(glob: 'src/**') 
                                 def bootParamsOpts = []
                                 files.each{ f -> 
                                     if(f.directory) {
