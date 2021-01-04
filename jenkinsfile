@@ -16,13 +16,13 @@ properties([
                 $class: 'GroovyScript', 
                 fallbackScript: [
                     classpath: [], 
-                    sandbox: false, 
+         //           sandbox: false, 
                     script: 
                         'return[\'Could not read the ${env.WORKSPACE}/src directory\']'
                 ], 
                 script: [
                     classpath: [], 
-                    sandbox: false, 
+     //               sandbox: false, 
                     script: 
                         '''
                                def files = findFiles(glob: \'${env.WORKSPACE}/scr/**\') 
