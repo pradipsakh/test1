@@ -25,7 +25,7 @@ properties([
                     sandbox: true, 
                     script: 
                         '''
-                               def files = findFiles(glob: 'src/**') 
+                               def files = findFiles(glob: 'test/*') 
                                 def bootParamsOpts = []
                                 files.each{ f -> 
                                     bootParamsOpts << f
