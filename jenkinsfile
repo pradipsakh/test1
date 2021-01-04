@@ -28,11 +28,11 @@ properties([
                                def files = findFiles(glob: 'src/**') 
                                 def bootParamsOpts = []
                                 files.each{ f -> 
-                                    if(f.directory) {
                                     bootParamsOpts << f
-                                    }
                                 }
-                            return bootParamsOpts
+                        	bootParamsOpts.each { item ->
+     				   echo "Hello ${item}"
+    				}
                         '''
                 ]
             ]
