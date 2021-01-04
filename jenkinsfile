@@ -18,14 +18,14 @@ properties([
                     classpath: [], 
                     sandbox: false, 
                     script: 
-                        'return[\'Could not read the ${env.WORKSPACE}/bootplan directory\']'
+                        'return[\'Could not read the ${env.WORKSPACE}/src directory\']'
                 ], 
                 script: [
                     classpath: [], 
                     sandbox: false, 
                     script: 
                         '''
-                               def files = findFiles(glob: \'${env.WORKSPACE}/bootplan/**\') 
+                               def files = findFiles(glob: \'${env.WORKSPACE}/scr/**\') 
                                 def bootParamsOpts = []
                                 files.each{ f -> 
                                     if(f.directory) {
