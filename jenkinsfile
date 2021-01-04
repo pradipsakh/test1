@@ -25,14 +25,12 @@ properties([
                     sandbox: true, 
                     script: 
                         '''
-                               def files = findFiles(glob: './test/*') 
+                               def files = findFiles(glob: 'test/*') 
                                 def bootParamsOpts = []
                                 files.each{ f -> 
-                                    bootParamsOpts << f
+                                    bootParamsOpts << f.name
                                 }
-                        	bootParamsOpts.each { item ->
-     				   echo "Hello ${item}"
-    				}
+                        	return bootParamsOpts
                         '''
                 ]
             ]
@@ -46,7 +44,7 @@ node() {
         try {
             stage('Execute Script') {
                 if (params.VERIFY_RUN) {
-                                def files = findFiles(glob: 'test/**') 
+                                def files = findFiles(glob: 'test/*') 
                                 def bootParamsOpts = []
                                 files.each{ f -> 
 					echo f.name
