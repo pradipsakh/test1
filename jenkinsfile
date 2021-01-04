@@ -46,127 +46,16 @@ node() {
         try {
             stage('Execute Script') {
                 if (params.VERIFY_RUN) {
-                    if (params.grp != '') {
-                        checkout scm
-                        echo('This is running in the '+env.TOWER_ENV+' environment.')
-                        sh(env.WRAPPERCMD_COMPUTE + " pull jms_nix_automation")
-                        sh(env.WRAPPERCMD_COMPUTE + " pull jms_nix_inventory")
-                        string limitCmd = ''
-                        def servicefile = readFile "bootplan/${params.grp}/services.conf"
-                        def servicelines = servicefile.readLines()
-                        def validatefile = readFile "bootplan/${params.grp}/validation.conf"
-                        def validationlines = validatefile.readLines()
-                        def bootfile = readFile "bootplan/${params.grp}/boot.conf"
-                        def bootlines = bootfile.readLines()
-                        def clustercheckfile = readFile "bootplan/${params.grp}/clusterchk.conf"
-                        def clusterchklines = clustercheckfile.readLines()
-
-                        // ####################### Service Stop section #################
-
-                        for (service in servicelines) {
-                            if (!service.startsWith( '#' )) {
-                                println "service : $service";
-                                def serviceinfo = service.split(':')
-                                def server = serviceinfo[1]
-                                def executioner = serviceinfo[2]
-                                def service_stop_command = serviceinfo[3]
-                                limitCmd = ' --limit=' + sh(returnStdout: true, script: env.ANSCOMP_BASE+'/jms_nix_inventory/bin/jms_scrub_hostnames.py -S -s '+server).trim()
-                                string CMD = env.WRAPPERCMD_COMPUTE + " plugh bootplan/service.yml -i env/all_hosts.sh -e 'grp=" + grp + " executioner=" + executioner + " command=\"\"\"" + service_stop_command + "\"\"\" operation=stop'" + limitCmd
-                                echo(CMD)
-				sh(CMD)
-                            }
-                        }
-
-                        // ####################### Service Stop validation section #################
-
-                        for (validation in validationlines) {
-                            if (!validation.startsWith( '#' )) {
-                                println "validation : $validation";
-                                def validationinfo = validation.split(':')
-                                def server = validationinfo[1]
-                                def executioner = validationinfo[2]
-                                def service_stop_validate_command = validationinfo[3]
-                                def service_stop_validate_timeout_m = validationinfo[5]
-                                limitCmd = ' --limit=' + sh(returnStdout: true, script: env.ANSCOMP_BASE+'/jms_nix_inventory/bin/jms_scrub_hostnames.py -S -s '+server).trim()
-                                string CMD = env.WRAPPERCMD_COMPUTE + " plugh bootplan/validate.yml -i env/all_hosts.sh -e 'grp=" + grp + " executioner=" + executioner + " command=\"\"\"" + service_stop_validate_command + "\"\"\" valRetries=" + service_stop_validate_timeout_m + " operation=stop'" + limitCmd
-                                echo(CMD)
-				sh(CMD)
-                            }
-                        }
-
-                        // ####################### boot section #################
-
-                        for (boot in bootlines) {
-                            if (!boot.startsWith( '#' )) {
-                                println "boot : $boot";
-                                def bootinfo = boot.split(':')
-                                def server = bootinfo[0]
-                                def wait = bootinfo[4].toInteger()*60
-                                limitCmd = ' --limit=' + sh(returnStdout: true, script: env.ANSCOMP_BASE+'/jms_nix_inventory/bin/jms_scrub_hostnames.py -S -s '+server).trim()
-                                string CMD = env.WRAPPERCMD_COMPUTE + " plugh bootplan/reboot.yml -i env/all_hosts.sh -e 'grp=" + grp + " wait=" + wait + "'" + limitCmd
-                                echo(CMD)
-				sh(CMD)
-                            }
-                        }
-
-                        // ####################### clusterchk section #################
-
-                        for (clusterchk in clusterchklines) {
-                            if (!clusterchk.startsWith( '#' )) {
-                                println "clusterchk : $clusterchk";
-                                def clusterchkinfo = clusterchk.split(':')
-                                def server = clusterchkinfo[0]
-                                def command = clusterchkinfo[2]
-                                def good_status = clusterchkinfo[3]
-                                limitCmd = ' --limit=' + sh(returnStdout: true, script: env.ANSCOMP_BASE+'/jms_nix_inventory/bin/jms_scrub_hostnames.py -S -s '+server).trim()
-                                string CMD = env.WRAPPERCMD_COMPUTE + " plugh bootplan/clusterchk.yml -i env/all_hosts.sh -e 'grp=" + grp + " command=\"\"\"" + command + "\"\"\" good_status=" + good_status + "'" + limitCmd
-                                echo(CMD)
-				sh(CMD)
-                            }
-                        }
-                        // ####################### Service start section #################
-
-                        for (service in servicelines) {
-                            if (!service.startsWith( '#' )) {
-                                println "service : $service";
-                                def serviceinfo = service.split(':')
-                                def server = serviceinfo[1]
-                                def executioner = serviceinfo[2]
-                                def service_start_command = serviceinfo[4]
-                                limitCmd = ' --limit=' + sh(returnStdout: true, script: env.ANSCOMP_BASE+'/jms_nix_inventory/bin/jms_scrub_hostnames.py -S -s '+server).trim()
-                                string CMD = env.WRAPPERCMD_COMPUTE + " plugh bootplan/service.yml -i env/all_hosts.sh -e 'grp=" + grp + " executioner=" + executioner + " command=\"\"\"" + service_start_command + "\"\"\" operation=start'" + limitCmd
-                                echo(CMD)
-				sh(CMD)
-                            }
-                        }
-
-                        // ####################### Service start validation section #################
-
-                        for (validation in validationlines) {
-                            if (!validation.startsWith( '#' )) {
-                                println "validation : $validation";
-                                def validationinfo = validation.split(':')
-                                def server = validationinfo[1]
-                                def executioner = validationinfo[2]
-                                def service_start_validate_command = validationinfo[4]
-                                def service_start_validate_timeout_m = validationinfo[6]
-                                limitCmd = ' --limit=' + sh(returnStdout: true, script: env.ANSCOMP_BASE+'/jms_nix_inventory/bin/jms_scrub_hostnames.py -S -s '+server).trim()
-                                string CMD = env.WRAPPERCMD_COMPUTE + " plugh bootplan/validate.yml -i env/all_hosts.sh -e 'grp=" + grp + " executioner=" + executioner + " command=\"\"\"" + service_start_validate_command + "\"\"\" valRetries=" + service_start_validate_timeout_m + " operation=start'" + limitCmd
-				echo(CMD)
-                                sh(CMD)
-                            }
-                        }
-                  /*      string CMD = env.WRAPPERCMD_COMPUTE + " plugh jms_patch_linux.yml -i env/all_hosts.sh -e 'grp=" + grp + "'" + limitCmd + ' --become'
-                        if (env.TOWER_ENV == 'DEV') {
-                            echo(CMD)
-                        } else {
-                            echo(CMD)
-                        } */
-
-                    } else {
-                        echo('The Ansible Group must be provided.')
-                        currentBuild.result = "FAILURE"
-                    }
+                                def files = findFiles(glob: 'src/**') 
+                                def bootParamsOpts = []
+                                files.each{ f -> 
+                                    echo f
+				    if(f.directory) {
+                                    bootParamsOpts << f
+                                    }
+                                }
+				echo bootParamsOpts
+				
                 } else {
                     echo('The VERIFY_RUN Flag must be checked.')
                     currentBuild.result = "FAILURE"
