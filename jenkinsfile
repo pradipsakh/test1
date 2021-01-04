@@ -49,12 +49,12 @@ node() {
                                 def files = findFiles(glob: 'src/**') 
                                 def bootParamsOpts = []
                                 files.each{ f -> 
-                                    echo f
+					echo f.name
 				    if(f.directory) {
                                     bootParamsOpts << f
                                     }
                                 }
-				echo bootParamsOpts
+
 				
                 } else {
                     echo('The VERIFY_RUN Flag must be checked.')
