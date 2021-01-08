@@ -45,7 +45,7 @@ node() {
             stage('Execute Script') {
                 if (params.VERIFY_RUN) {
 				checkout scm
-			datas = readYaml file: "env.yml"
+			datas = readYaml file: "env.yaml"
                      
                         def servicelines = datas.services.readLines()
 
