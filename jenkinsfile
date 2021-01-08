@@ -54,6 +54,15 @@ node() {
                         def bootlines = datas.boot.readLines()
 
                         def clusterchklines = datas.clusterchk.readLines()
+			
+			
+			for (service in servicelines) {
+                            if (!service.startsWith( '#' )) {
+                                println "service : $service";
+                            }
+                        }
+
+
 
                 } else {
                     echo('The VERIFY_RUN Flag must be checked.')
